@@ -21,7 +21,7 @@ type RouletteWheelProps = {
 
 const RouletteWheel = (
   {
-    segments,
+    segments = [],
     upDuration = 100,
     downDuration = 100,
     winningSegment,
@@ -42,7 +42,7 @@ const RouletteWheel = (
   const timerDelay = segments.length
   const upTime = segments.length * upDuration
   const downTime = segments.length * downDuration
-  let canvasctx = canvasRef.current?.getContext('2d')
+  let canvasctx: CanvasRenderingContext2D | null | undefined  = null
   let isStarted = false
   let timerHandle = 0
   let spinStart = 0
@@ -66,7 +66,6 @@ const RouletteWheel = (
  
 
   useEffect(() => {
-
     wheelInit()
     setTimeout(() => {
      
@@ -76,6 +75,8 @@ const RouletteWheel = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [segments])
+
+  
 
 
 
@@ -119,7 +120,10 @@ const RouletteWheel = (
     }
   };
   const initCanvas = () => {
-    canvasRef.current?.addEventListener('click', spin2, false)
+    if(canvasRef.current){
+      canvasRef.current.addEventListener('click', spin2, false)
+      canvasctx = canvasRef.current?.getContext('2d')
+    }
   }
 
   // const spin = () => {
@@ -268,6 +272,7 @@ const RouletteWheel = (
   const drawWheel = () => {
     let lastAngle = angleCurrent;
     const len = segments.length
+   
     const PI2 = Math.PI * 2
     if (canvasctx) {
       canvasctx.lineWidth = 1;

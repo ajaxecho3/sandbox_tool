@@ -17,6 +17,7 @@ const Roulette = (props: Props) => {
   const [winners, setWinners] = useState<Array<string>>([])
   const debounceVal = useDebounce(winner)
   const [currentName, setCurrentName] = useState<string>('')
+  const [CurrentSegments, setCurrentSegments] = useState<Array<string>>([])
 
 
   const handleOnFinish = (e: string) => {
@@ -56,6 +57,10 @@ const Roulette = (props: Props) => {
     setSegments(temp)
   }
 
+  const handleLoadSegments = () => {
+    setCurrentSegments(segments)
+  }
+
 
   return (
     <div className="__container bg-gray-50">
@@ -65,9 +70,9 @@ const Roulette = (props: Props) => {
 
           <div className='flex justify-center p-6 w-3/6'>
             {
-              segments.length > 0 ?
+              CurrentSegments.length > 0 ?
                 <RouletteWheel
-                  segments={segments}
+                  segments={CurrentSegments}
                   winningSegment={winners}
                   onFinished={(winner: string) => handleOnFinish(winner)}
                   primaryColor="black"
@@ -76,10 +81,7 @@ const Roulette = (props: Props) => {
                   buttonText="Spin"
                   isOnlyOnce={false}
                   size={290}
-                  // height={800}
-                  // width={800}
-
-                  segmentColors={segments.map((color) => RandomGeneratorHexColor())}
+                  segmentColors={CurrentSegments.map((color) => RandomGeneratorHexColor())}
                   upDuration={1000}
                   downDuration={100}
                 />
@@ -164,7 +166,7 @@ const Roulette = (props: Props) => {
                 ))
               }
               <div>
-                <button onClick={() => handleAddSegment()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Load Segments</button>
+                <button onClick={() => handleLoadSegments()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Load Segments</button>
               </div>
 
             </div>
@@ -179,8 +181,6 @@ const Roulette = (props: Props) => {
               <div>
                 <button onClick={() => handleAddSegment()} onKeyDown={() => handleAddSegment()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Add</button>
               </div>
-
-
             </div>
           </div>
         </section>
