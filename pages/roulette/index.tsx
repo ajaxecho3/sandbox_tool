@@ -1,27 +1,38 @@
 import { Transition, Dialog } from '@headlessui/react'
-import React, { ChangeEvent, Fragment, use, useState } from 'react'
+import React, { ChangeEvent, Fragment, use, useEffect, useState } from 'react'
 import LottieRoulette from '../../components/Lottie/LottieRoulette'
+import RouletteWheel from '../../components/RouletteWheel'
 import SectionHeader from '../../components/SectionHeader'
 import Wheel from '../../components/Wheel'
 import useDebounce from '../../hooks/useDebounce'
+import RandomGeneratorHexColor from '../../utils/ColorGenerator'
 
 type Props = {}
 
 const Roulette = (props: Props) => {
-  
+
   const [segments, setSegments] = useState<Array<string>>([])
   const [showWinner, setShowWinner] = useState(false)
   const [winner, setWinner] = useState('')
   const [winners, setWinners] = useState<Array<string>>([])
-  
+  const debounceVal = useDebounce(winner)
   const [currentName, setCurrentName] = useState<string>('')
-  
+
 
   const handleOnFinish = (e: string) => {
+   
     setWinner(e)
-    setShowWinner(true)
-    return e
+
+
   }
+
+  useEffect(() => {
+    if (debounceVal !== '') {
+      console.log('Winner is ', debounceVal)
+
+      setShowWinner(true)
+    }
+  }, [debounceVal])
   const handleCloseModal = () => {
     setWinners((prev) => {
       let temp = [...prev]
@@ -32,13 +43,13 @@ const Roulette = (props: Props) => {
     })
     setShowWinner(false)
   }
-  
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCurrentName(event.target.value)
   }
 
   const handleAddSegment = () => {
-    console.log("Add")
+
     let temp = [...segments]
 
     temp.push(currentName)
@@ -51,10 +62,29 @@ const Roulette = (props: Props) => {
       <div className='w-full'>
         <SectionHeader lineShow={false} title='Roulette' description='' />
         <section className="text-gray-600 body-font overflow-hidden flex justify-center ">
-         
+
           <div className='flex justify-center p-6 w-3/6'>
             {
-              segments.length !== 0 ? <Wheel segments={segments} onFinish={(e) => handleOnFinish(e)} /> : <LottieRoulette />
+              segments.length > 0 ?
+                <RouletteWheel
+                  segments={segments}
+                  winningSegment={winners}
+                  onFinished={(winner: string) => handleOnFinish(winner)}
+                  primaryColor="black"
+                  primaryColoraround="#ffffffb4"
+                  contrastColor="white"
+                  buttonText="Spin"
+                  isOnlyOnce={false}
+                  size={290}
+                  // height={800}
+                  // width={800}
+
+                  segmentColors={segments.map((color) => RandomGeneratorHexColor())}
+                  upDuration={1000}
+                  downDuration={100}
+                />
+                :
+                <LottieRoulette />
             }
             <Transition appear show={showWinner} as={Fragment}>
               <Dialog as="div" className="relative z-10" onClose={handleCloseModal}>
@@ -116,27 +146,27 @@ const Roulette = (props: Props) => {
                 <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">{winners.length > 1 ? "Winners" : "Winner"}</h2>
                 <button onClick={() => setWinners([])}>Reset</button>
               </div>
-                {
-                  winners.map((winner, idx) => (
-                    <p className="leading-relaxed mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2" key={idx}>{idx + 1}.{winner}</p>
-                  ))
-                }
-              
+              {
+                winners.map((winner, idx) => (
+                  <p className="leading-relaxed mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2" key={idx}>{idx + 1}.{winner}</p>
+                ))
+              }
+
             </div>
             <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md mb-5">
               <div className='flex justify-between mb-2'>
                 <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Segments</h2>
                 <button onClick={() => setWinners([])}>Reset</button>
               </div>
-                {
-                  segments.map((segment, idx) => (
-                    <p className="leading-relaxed mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2" key={idx}>{idx + 1}.{segment}</p>
-                  ))
-                }
+              {
+                segments.map((segment, idx) => (
+                  <p className="leading-relaxed mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2" key={idx}>{idx + 1}.{segment}</p>
+                ))
+              }
               <div>
                 <button onClick={() => handleAddSegment()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Load Segments</button>
               </div>
-              
+
             </div>
             <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
               <div className='flex justify-between mb-2'>
@@ -147,15 +177,15 @@ const Roulette = (props: Props) => {
                 <input type="text" onChange={handleInputChange} id="name" name="name" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
               </div>
               <div>
-                <button onClick={() => handleAddSegment()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Add</button>
+                <button onClick={() => handleAddSegment()} onKeyDown={() => handleAddSegment()} className='w-full border-solid border-[1px] p-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Add</button>
               </div>
-             
+
 
             </div>
           </div>
         </section>
-        
-       
+
+
       </div>
     </div>
   )
