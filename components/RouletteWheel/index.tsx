@@ -248,6 +248,8 @@ const RouletteWheel = (
   const drawSegment = (key: number, lastAngle: number, angle: number) => {
     const ctx = canvasctx;
     const value = segments[key];
+ 
+    
     if (ctx) {
       ctx.save();
       ctx.beginPath();
