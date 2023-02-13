@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { Transition, Dialog } from '@headlessui/react'
-import React, { ChangeEvent, FormEvent, Fragment, use, useEffect, useState } from 'react'
+import { uptime } from 'process'
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, Fragment, use, useEffect, useState } from 'react'
+import Input from '../../components/common/Input'
 import Modal from '../../components/common/Modal'
 import LottieRoulette from '../../components/Lottie/LottieRoulette'
 import RouletteWheel from '../../components/RouletteWheel'
@@ -11,6 +13,9 @@ import RandomGeneratorHexColor from '../../utils/ColorGenerator'
 type Props = {}
 
 type Segment = { name: string, color: string, image: string}
+type Setting = {
+  upTime: number, downTime: number, color: string, bgColor: string, colorContrast: string,fontSize: number,buttonText: string, wheelSize: number
+}
 
 function convertToBase64(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,7 +35,16 @@ const Roulette = (props: Props) => {
   const [currentName, setCurrentName] = useState<string>('')
   const [CurrentSegments, setCurrentSegments] = useState<Array<string>>([])
   const [showSetting, setShowSetting] = useState(false)
-
+  const [settings, setSettings] = useState<Setting>({
+    upTime: 1000,
+    downTime:100,
+    color: '#000000',
+    bgColor: '#ffffff',
+    colorContrast: '#ffffff',
+    fontSize: 1,
+    wheelSize: 290,
+    buttonText: 'Spin'
+  })
 
   const handleOnFinish = (e: string) => {
    
@@ -59,10 +73,6 @@ const Roulette = (props: Props) => {
     setCurrentSegments((prev) => prev.filter((d) => d !== winner))
     setShowWinner(false)
   }
-
-  
-
- 
 
   const handleLoadSegments = () => {
     const segmentsName = segments.map((segments) => segments.name)
@@ -136,7 +146,53 @@ const Roulette = (props: Props) => {
           headerContent={<h3 className='text-lg font-medium leading-6 text-gray-900 '>Settings</h3>}
           hideHeader={false} 
         >
-          
+          <div className='flex mt-2 space-x-1' >
+            <div className="mb-3 xl:w-96">
+              <Input label='Up-time Duration' value={settings.upTime} type='number' onChange={(e) => setSettings((prev) => {
+                return { ...prev, upTime: Number(e.target.value) }
+              })} />
+            </div>
+            <div className="mb-3 xl:w-96">
+              <Input label='Down-time Duration' value={settings.downTime} type='number' onChange={(e) => setSettings((prev) => {
+                return { ...prev, downTime: Number(e.target.value) }
+              })} />
+            </div>
+            <div className="mb-3 xl:w-96">
+              <Input label='Wheel Size' value={settings.wheelSize} type='number' onChange={(e) => setSettings((prev) => {
+                return { ...prev, wheelSize: Number(e.target.value) }
+              })} />
+            </div>
+          </div>
+          <div className='flex space-x-1' >
+            <div className="mb-3 xl:w-96">
+              <Input label='Spin Button Color' value={settings.color} type='color' onChange={(e) => setSettings((prev) => {
+                return { ...prev, color: e.target.value }
+              })} />
+            </div>
+            <div className="mb-3 xl:w-96">
+              <Input label='Background Color' value={settings.bgColor} type='color' onChange={(e) => setSettings((prev) => {
+                return { ...prev, bgColor: e.target.value }
+              })} />
+            </div>
+            <div className="mb-3 xl:w-96">
+              <Input label='Color Contrast' value={settings.colorContrast} type='color' onChange={(e) => setSettings((prev) => {
+                return { ...prev, colorContrast: e.target.value }
+              })} />
+            </div>
+          </div>
+          <div className='flex space-x-1' >
+            <div className="mb-3 xl:w-96">
+              <Input label='Font size' value={settings.fontSize} type='number' onChange={(e) => setSettings((prev) => {
+                return { ...prev, fontSize: Number(e.target.value) }
+              })} />
+            </div>
+            <div className="mb-3 xl:w-96">
+              <Input label='Button Text' value={settings.buttonText} type='text' onChange={(e) => setSettings((prev) => {
+                return { ...prev, buttonText: e.target.value }
+              })} />
+            </div>
+            
+          </div>
         </Modal>
         <section className="text-gray-600 body-font overflow-hidden flex justify-center ">
 
@@ -147,15 +203,15 @@ const Roulette = (props: Props) => {
                   segments={CurrentSegments}
                   winningSegment={winners}
                   onFinished={(winner: string) => handleOnFinish(winner)}
-                  primaryColor="black"
-                  primaryColoraround="#ffffffb4"
-                  contrastColor="white"
-                  buttonText="Spin"
+                  primaryColor={settings.color}
+                  primaryColoraround={settings.bgColor}
+                  contrastColor={settings.colorContrast}
+                  buttonText={settings.buttonText}
                   isOnlyOnce={false}
-                  size={290}
+                  size={settings.wheelSize}
                   segmentColors={CurrentSegments.map((color) => RandomGeneratorHexColor())}
-                  upDuration={1000}
-                  downDuration={100}
+                  upDuration={settings.upTime}
+                  downDuration={settings.downTime}
                 />
                 :
                 <LottieRoulette />
