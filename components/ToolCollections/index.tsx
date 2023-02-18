@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react'
-import SectionHeader from '../SectionHeader'
+import SectionHeader from '../common/SectionHeader'
 import CollectionCard from './CollectionCard'
 
 type Props = {}
