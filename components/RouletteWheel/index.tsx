@@ -7,7 +7,7 @@ type RouletteWheelProps = {
   segmentColors: Array<string>
   upDuration: number
   downDuration: number
-  winningSegment: string | Array<string>
+  winningSegment: string 
   onFinished: (value: string) => void
   onIsFinished?: (value: boolean) => void
   primaryColor: string
@@ -17,13 +17,14 @@ type RouletteWheelProps = {
   buttonText: string
   size: number
   isOnlyOnce: boolean
+  fontSize: number
 }
 
 const RouletteWheel = (
   {
-    segments = [],
-    upDuration = 100,
-    downDuration = 100,
+    segments ,
+    upDuration ,
+    downDuration ,
     winningSegment,
     onFinished,
     primaryColor,
@@ -31,9 +32,10 @@ const RouletteWheel = (
     fontFamily = "proxima-nova",
     contrastColor,
     buttonText,
-    size = 290,
+    size,
     isOnlyOnce = true,
     segmentColors,
+    fontSize,
     onIsFinished
   }: RouletteWheelProps) => {
   
@@ -57,28 +59,23 @@ const RouletteWheel = (
 
   const SPIN_FREQUENCY = 10;
   const PI2 = Math.PI * 2;
-  const UP_TIME = 1000;
-  const DOWN_TIME = 500;
+  const UP_TIME = upDuration | 1000;
+  const DOWN_TIME = downDuration | 500;
   const SPIN_UP_PROGRESS = 0.8;
   const SPEED_MODIFIER_1 = 1.2;
   const SPEED_MODIFIER_2 = 2;
 
- 
 
   useEffect(() => {
+    
     wheelInit()
-    setTimeout(() => {
-     
-    }, 0)
+    console.log(segments)
     return () => {
       window.scrollTo(0, 1)
+  
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [segments])
-
-  
-
-
 
 
   const wheelInit = () => {
@@ -89,11 +86,10 @@ const RouletteWheel = (
   const wheelDraw = () => {
     clear();
     drawWheel();
-    drawNeedle();
+    drawNeedle(canvasctx);
   };
 
-  const drawNeedle = () => {
-    const ctx = canvasctx;
+  const drawNeedle = (ctx: CanvasRenderingContext2D | null | undefined) => {
     if (ctx) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = contrastColor || "white";
@@ -105,10 +101,7 @@ const RouletteWheel = (
       ctx.closePath();
       ctx.fill();
       const change = angleCurrent + Math.PI / 2;
-      let i =
-        segments.length -
-        Math.floor((change / (Math.PI * 2)) * segments.length) -
-        1;
+      let i = segments.length - Math.floor((change / (Math.PI * 2)) * segments.length) - 1;
       if (i < 0) i = i + segments.length;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -125,64 +118,6 @@ const RouletteWheel = (
       canvasctx = canvasRef.current?.getContext('2d')
     }
   }
-
-  // const spin = () => {
-  //   isStarted = true;
-  //   if (!timerHandle) {
-  //     spinStart = new Date().getTime();
-  //     maxSpeed = Math.PI / segments.length;
-  //     frames = 0;
-  //     timerHandle = window.setInterval(onTimerTick, 1);
-      
-  //   }
-  // };
-
-
-
-  // const onTimerTick = () => {
-  //   frames++
-  //   draw()
-  //   const duration = new Date().getTime() - spinStart
-  //   let progress = 0
-  //   let finished = false
-  //   let speedModifier = 1
-    
-  //   if (duration >= upTime) {
-  //     progress = duration >= downTime ? 1 : duration / downTime;
-  //     const segmentProgress = progress * Math.PI / 2;
-  //     const baseSpeed = maxSpeed * Math.sin(segmentProgress);
-
-  //     if (winningSegment) {
-  //       if (currentSegment === winningSegment && frames > segments.length) {
-  //         speedModifier = 2
-  //       }
-  //     } else {
-  //       if (progress >= 0.8) {
-  //         speedModifier = 1.2
-  //       } else if (progress >= 0.98) {
-  //         speedModifier = 2
-  //       }
-  //     }
-  //     angleDelta = baseSpeed / speedModifier
-  //     finished = progress >= 1
-  //   } else {
-  //     progress = duration / upTime
-  //     angleDelta = maxSpeed * Math.sin(progress * Math.PI / 2)
-  //   }
-
-  //   angleCurrent += angleDelta
-  //   angleCurrent = angleCurrent % (Math.PI * 2)
-    
-  //   if (finished) {
-  //     setFinished(true)
-      
-  //     onFinished(currentSegment)
-  //     clearInterval(timerHandle)
-  //     timerHandle = 0
-  //     angleDelta = 0
-  //   }
-  // }
-
   const spin2 = () => {
     isStarted = true;
     if (!timerHandle) {
@@ -194,6 +129,7 @@ const RouletteWheel = (
   };
 
   const onTimerTick2 = () => {
+    
     frames++;
     draw();
     const duration = new Date().getTime() - spinStart;
@@ -225,31 +161,25 @@ const RouletteWheel = (
 
     angleCurrent += angleDelta;
     angleCurrent = angleCurrent % (Math.PI * 2)
-
     if (finished) {
       setFinished(true);
       onFinished(currentSegment);
       clearInterval(timerHandle);
       timerHandle = 0;
       angleDelta = 0;
+     
     }
   };
-
-
-
-
 
   const draw = () => {
     clear();
     drawWheel();
-    drawNeedle();
+    drawNeedle(canvasctx);
   }
 
   const drawSegment = (key: number, lastAngle: number, angle: number) => {
     const ctx = canvasctx;
     const value = segments[key];
- 
-    
     if (ctx) {
       ctx.save();
       ctx.beginPath();
@@ -264,17 +194,16 @@ const RouletteWheel = (
       ctx.translate(centerX, centerY);
       ctx.rotate((lastAngle + angle) / 2);
       ctx.fillStyle = contrastColor || "white";
-      ctx.font = "bold 1em " + fontFamily;
+      ctx.font = `bold ${fontSize}px ` + fontFamily;
       ctx.fillText(value.substr(0, 21), size / 2 + 20, 0);
       ctx.restore();
     }
   };
 
-
   const drawWheel = () => {
     let lastAngle = angleCurrent;
     const len = segments.length
-   
+
     const PI2 = Math.PI * 2
     if (canvasctx) {
       canvasctx.lineWidth = 1;
@@ -310,19 +239,21 @@ const RouletteWheel = (
       canvasctx.strokeStyle = primaryColoraround || "white";
       canvasctx.stroke();
     }
+    
   }
 
   const clear = () => {
     canvasctx?.clearRect(0, 0, 1000, 800)
   }
+  
 
   return (
-    <div id='wheel'>
+    <div id='wheel' className=" items-center">
       <canvas
         ref={canvasRef}
         id="canvas"
-        width={"600"}
-        height={"600"}
+        width={600}
+        height={600}
         style={{
           pointerEvents: isFinished && isOnlyOnce ? "none" : "auto"
         }}

@@ -9,7 +9,7 @@ import RouletteWheel from '../../components/RouletteWheel'
 import SectionHeader from '../../components/SectionHeader'
 import useDebounce from '../../hooks/useDebounce'
 import RandomGeneratorHexColor from '../../utils/ColorGenerator'
-
+import Avatar, { genConfig } from 'react-nice-avatar'
 type Props = {}
 
 type Segment = { name: string, color: string, image: string}
@@ -41,7 +41,7 @@ const Roulette = (props: Props) => {
     color: '#000000',
     bgColor: '#ffffff',
     colorContrast: '#ffffff',
-    fontSize: 1,
+    fontSize: 17,
     wheelSize: 290,
     buttonText: 'Spin'
   })
@@ -102,15 +102,45 @@ const Roulette = (props: Props) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const temp_segment = [...segments]
-    temp_segment.push(formData)
-    console.log(formData);
-    setSegments(temp_segment)
-    setFormData({
-      name: '',
-      color: '#000000',
-      image: ''
-    })
+    if(formData.name === 'iatmanila'){
+      let iatTeam = [
+        { name: 'Bernard', color: '#000000', image: '' },
+        { name: 'Alan', color: '#000000', image: '' },
+        { name: 'Day', color: '#000000', image: '' },
+        { name: 'Sherwin', color: '#000000', image: '' },
+        { name: 'Kerby', color: '#000000', image: '' },
+        { name: 'Jean', color: '#000000', image: '' },
+        { name: 'Kim', color: '#000000', image: '' },
+        { name: 'Khars', color: '#000000', image: '' },
+        { name: 'Monica', color: '#000000', image: '' },
+        { name: 'Charm', color: '#000000', image: '' },
+        { name: 'Jeff', color: '#000000', image: '' },
+        { name: 'Cams', color: '#000000', image: '' },
+        { name: 'Dianne', color: '#000000', image: '' },
+        { name: 'Franz', color: '#000000', image: '' },
+        { name: 'Venus', color: '#000000', image: '' },
+        { name: 'Gelyn', color: '#000000', image: '' },
+      ]
+
+      setSegments(iatTeam)
+      setFormData({
+        name: '',
+        color: '#000000',
+        image: ''
+      })
+    }else{
+      const temp_segment = [...segments]
+      temp_segment.push(formData)
+      console.log(formData);
+      setSegments(temp_segment)
+      setFormData({
+        name: '',
+        color: '#000000',
+        image: ''
+      })
+    }
+
+    
 
   
     
@@ -120,8 +150,13 @@ const Roulette = (props: Props) => {
     setShowSetting(false)
   }
 
+  const config = genConfig(winner)
+
  
   
+  const configGenerator = (name:string) => {
+      return genConfig(name)
+  }
 
 
   return (
@@ -158,7 +193,7 @@ const Roulette = (props: Props) => {
               })} />
             </div>
             <div className="mb-3 xl:w-96">
-              <Input label='Wheel Size' value={settings.wheelSize} type='number' onChange={(e) => setSettings((prev) => {
+              <Input label='Wheel Size' value={settings.wheelSize}  type='number' onChange={(e) => setSettings((prev) => {
                 return { ...prev, wheelSize: Number(e.target.value) }
               })} />
             </div>
@@ -200,8 +235,9 @@ const Roulette = (props: Props) => {
             {
               CurrentSegments.length > 0 ?
                 <RouletteWheel
+                  fontSize={settings.fontSize}
                   segments={CurrentSegments}
-                  winningSegment={winners}
+                  winningSegment={winner}
                   onFinished={(winner: string) => handleOnFinish(winner)}
                   primaryColor={settings.color}
                   primaryColoraround={settings.bgColor}
@@ -224,11 +260,16 @@ const Roulette = (props: Props) => {
           <Modal
             isOpen={showWinner}
             onClose={handleCloseModal}
-            headerContent={<h3 className='text-lg font-medium leading-6 text-gray-900 text-center'>Winner</h3>}
+            headerContent={<h3 className=' text-5xl font-medium leading-6 text-gray-900 text-center'>Winner</h3>}
             hideHeader={false}
            >
+            <div className='flex justify-center items-center mt-4'>
+              <Avatar className='h-40 w-40 rounded-lg ring-2 ring-white' {...config}/>
+              {/* <img className='h-40 w-40 rounded-lg ring-2 ring-white' src='https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' alt='winner'/> */}
+            </div>
+
             <div className="mt-2">
-              <p className="text-bold text-center text-gray-500 text-lg">
+              <p className="text-bold text-center text-gray-500 text-4xl">
                 {winner}
               </p>
             </div>
@@ -253,7 +294,7 @@ const Roulette = (props: Props) => {
                 {
                   winners.map((winner, idx) => (
                     <div key={idx} className='mb-2 text-gray-600  p-2 flex space-x-3 items-center'>
-                      <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                      <Avatar className='h-10 w-10 rounded-lg ring-2 ring-white' {...configGenerator(winner)} />
                       <p className=" leading-relaxed text-2xl" >
                         {winner}
                       </p>
@@ -282,9 +323,11 @@ const Roulette = (props: Props) => {
                   segments.map((segment, idx) => (
                     <div key={idx} className='mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2 flex space-x-3 items-center'>
                       {
-                        segment.image !== '' && (
+                        segment.image !== '' ? 
                           <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white" src={segment.image} alt="" />
-                        )
+                          :
+                          <Avatar className='h-10 w-10 rounded-lg ring-2 ring-white' {...configGenerator(segment.name)} />
+                        
                       }
                       <p className="leading-relaxed text-lg" >
 
@@ -314,6 +357,7 @@ const Roulette = (props: Props) => {
                     Name
                   </label>
                   <input
+                    required
                     className="border border-gray-400 p-2 w-full"
                     type="text"
                     id="name"
@@ -355,7 +399,7 @@ const Roulette = (props: Props) => {
                     onChange={handleImageChange}
                   />
                 </div>
-                <button className="bg-indigo-500 text-white py-2 px-4 rounded-full hover:bg-indigo-600">
+                <button disabled={winners.length !== 0 ? true : false} className=" disabled:bg-gray-600 disabled:hover:bg-gray-600 bg-indigo-500 text-white py-2 px-4 rounded-full w-full hover:bg-indigo-600">
                   Add
                 </button>
               </form>
