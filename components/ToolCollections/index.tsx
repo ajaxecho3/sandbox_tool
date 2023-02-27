@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react'
 import SectionHeader from '../common/SectionHeader'
+import LottieBomb from '../Lottie/LottieBomb'
+import LottieRoulette from '../Lottie/LottieRoulette'
 import CollectionCard from './CollectionCard'
 
 type Props = {}
@@ -8,9 +10,21 @@ type Props = {}
 const ToolCollections = (props: Props) => {
   return (
     <div className="__container">
-      <SectionHeader lineShow title='Tool Collection' description='Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical gentrify, subway tile poke farm-to-table. Franzen you probably haven`&#39;t heard of them man bun deep jianbing selfies heirloom prism food truck ugh squid celiac humblebrag.' />
+     
       <div className="flex flex-wrap -m-4">
-        <CollectionCard title='roulette' desription='whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical gentrify, subway tile poke farm-to-table.' subtitle='entertainment' imgSrc=''  />
+        <CollectionCard route="/roulette">
+          <div className=" bg-blue-700 p-6 rounded-lg shadow-lg">
+            <LottieRoulette />
+            <p className='text-center text-white font-bold'>Wheel of Chance</p>
+          </div>
+        </CollectionCard>
+        <CollectionCard route="/roulette">
+          <div className=" bg-orange-400 p-6 rounded-lg shadow-lg">
+            <LottieBomb />
+            <p className='text-center text-white font-bold'>Mine Sweeper</p>
+          </div>
+        </CollectionCard>
+        
        
       </div>
     </div>

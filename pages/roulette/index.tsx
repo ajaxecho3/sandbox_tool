@@ -7,6 +7,7 @@ import useDebounce from '../../hooks/useDebounce'
 import RandomGeneratorHexColor from '../../utils/ColorGenerator'
 import ColorPicker from '../../components/common/ColorPicker'
 import AvatarMe from '../../components/common/Avatar'
+import LottieConfetti from '../../components/Lottie/LottieConfetti'
 type Props = {}
 
 type Segment = { name: string, color: string, image: string}
@@ -284,6 +285,7 @@ const Roulette = (props: Props) => {
             headerContent={<h3 className=' text-5xl font-medium leading-6 text-gray-900 text-center'>Winner</h3>}
             hideHeader={false}
            >
+            <LottieConfetti className=' absolute pointer-events-none' />
             <div className='flex justify-center items-center mt-4'>
               <AvatarMe tw='w-40 h-40' name={winner} color={getColorByName(winner)}/>
               {/* <img className='h-40 w-40 rounded-lg ring-2 ring-white' src='https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' alt='winner'/> */}
@@ -294,7 +296,7 @@ const Roulette = (props: Props) => {
                 {winner}
               </p>
             </div>
-
+           
             <div className="mt-4 flex justify-center">
               <button
                 type="button"

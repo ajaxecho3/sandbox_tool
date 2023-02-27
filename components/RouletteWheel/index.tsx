@@ -257,7 +257,7 @@ const RouletteWheel = (
         className='  z-0'
 
       />
-      <button onClick={() => spin2()} style={{ left: centerX - 25, top: centerY - 15, pointerEvents: isFinished && isOnlyOnce ? "none" : "auto" }} className=' absolute l z-10 text-2xl text-white'>
+      <button onClick={() => spin2()} style={{ left: centerX - 30, top: centerY - 30, pointerEvents: isFinished && isOnlyOnce ? "none" : "auto", height: '60px', width: '60px' }} className=' absolute l z-10 text-2xl text-white'>
         {buttonText ?? 'SPIN'}
       </button>
     </div>
