@@ -18,7 +18,7 @@ const ToolCollections = (props: Props) => {
             <p className='text-center text-white font-bold'>Wheel of Chance</p>
           </div>
         </CollectionCard>
-        <CollectionCard route="/roulette">
+        <CollectionCard route="/mineSweeper">
           <div className=" bg-orange-400 p-6 rounded-lg shadow-lg">
             <LottieBomb />
             <p className='text-center text-white font-bold'>Mine Sweeper</p>
