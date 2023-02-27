@@ -62,8 +62,8 @@ const Roulette = (props: Props) => {
 
   const handleLoadSegments = () => {
     const segmentsName = segments.map((segments) => segments.name)
-    console.log(segments)
     setCurrentSegments(segmentsName)
+    
   }
   const [formData, setFormData] = useState<Segment>({
     name: "",
@@ -166,6 +166,13 @@ const Roulette = (props: Props) => {
     const selectSegment = segments.filter((seg) => seg.name === name)
     return selectSegment[0]?.color ?? ''
   }
+
+  const resetSegments = () => {
+    setSegments([])
+    setWinners([])
+    setCurrentSegments([])
+    setWinner('')
+  }
   
 
 
@@ -173,18 +180,22 @@ const Roulette = (props: Props) => {
     <div className="__container bg-gray-50">
       <div className='w-full relative'>
         
-        <button onClick={() => setShowSetting(true)} className='hover:text-indigo-800 text-[20px] flex items-center'>
-          <svg
-            stroke="currentColor"
-            fill="currentColor"
-            strokeWidth="0"
-            viewBox="0 0 512 512"
-            height="1em"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg">
-            <path d="M413.967 276.8c1.06-6.235 1.06-13.518 1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318c4.26-3.118 5.319-8.317 2.13-13.518L418.215 115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186 20.801c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098c-5.318 0-9.577 4.164-10.637 8.318l-8.508 55.117c-12.767 5.2-24.464 12.482-36.171 20.801l-53.186-20.801c-5.319-2.071-10.638 0-12.767 4.164L49.1 187.365c-2.119 4.153-1.061 10.399 2.129 13.518L96.97 235.2c0 7.282-1.06 13.518-1.06 20.8s1.06 13.518 1.06 20.8l-44.668 34.318c-4.26 3.118-5.318 8.317-2.13 13.518L92.721 396.4c2.13 4.164 8.508 6.235 12.767 4.164l53.187-20.801c10.637 8.318 23.394 15.601 36.16 20.801l8.508 55.117c1.069 5.2 5.318 8.318 10.637 8.318h85.098c5.319 0 9.578-4.164 10.638-8.318l8.518-55.117c12.757-5.2 24.464-12.482 36.16-20.801l53.187 20.801c5.318 2.071 10.637 0 12.767-4.164l42.549-71.765c2.129-4.153 1.06-10.399-2.13-13.518l-46.8-34.317zm-158.499 52c-41.489 0-74.46-32.235-74.46-72.8s32.971-72.8 74.46-72.8 74.461 32.235 74.461 72.8-32.972 72.8-74.461 72.8z"></path>
-          </svg>
-        </button>
+        {
+          CurrentSegments.length === 0 && (
+            <button onClick={() => setShowSetting(true)} className='hover:text-indigo-800 text-[20px] flex items-center'>
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="0"
+                viewBox="0 0 512 512"
+                height="1em"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M413.967 276.8c1.06-6.235 1.06-13.518 1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318c4.26-3.118 5.319-8.317 2.13-13.518L418.215 115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186 20.801c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098c-5.318 0-9.577 4.164-10.637 8.318l-8.508 55.117c-12.767 5.2-24.464 12.482-36.171 20.801l-53.186-20.801c-5.319-2.071-10.638 0-12.767 4.164L49.1 187.365c-2.119 4.153-1.061 10.399 2.129 13.518L96.97 235.2c0 7.282-1.06 13.518-1.06 20.8s1.06 13.518 1.06 20.8l-44.668 34.318c-4.26 3.118-5.318 8.317-2.13 13.518L92.721 396.4c2.13 4.164 8.508 6.235 12.767 4.164l53.187-20.801c10.637 8.318 23.394 15.601 36.16 20.801l8.508 55.117c1.069 5.2 5.318 8.318 10.637 8.318h85.098c5.319 0 9.578-4.164 10.638-8.318l8.518-55.117c12.757-5.2 24.464-12.482 36.16-20.801l53.187 20.801c5.318 2.071 10.637 0 12.767-4.164l42.549-71.765c2.129-4.153 1.06-10.399-2.13-13.518l-46.8-34.317zm-158.499 52c-41.489 0-74.46-32.235-74.46-72.8s32.971-72.8 74.46-72.8 74.461 32.235 74.461 72.8-32.972 72.8-74.461 72.8z"></path>
+              </svg>
+            </button>
+          )
+        }
         <Modal 
           onClose={handleCloseSetting}
           isOpen={showSetting}
@@ -295,7 +306,7 @@ const Roulette = (props: Props) => {
             </div>
             </Modal>
           {
-            winner.length !== 0 && (
+            winners.length !== 0 && (
               <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 lg:top-0 lg:right-0 lg:w-3/12 lg:max-h-[550px] lg:overflow-y-auto z-10 shadow-md mb-5 relative lg:absolute">
                 <div className='flex justify-between mb-2'>
                   <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">{winners.length > 1 ? "Winners" : "Winner"}</h2>
@@ -326,7 +337,7 @@ const Roulette = (props: Props) => {
                   <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Segments</h2>
                   <div className='flex space-x-2'>
                     <button onClick={() => handleLoadSegments()} className='w-full border-solid border-[1px] px-2 rounded-lg bg-indigo-600 hover:bg-indigo-400 text-white'>Load Segments</button>
-                    <button onClick={() => setWinners([])}>Reset</button>
+                    <button onClick={() => resetSegments()}>Reset</button>
                   </div>
                 </div>
                 {
