@@ -57,7 +57,7 @@ const RouletteWheel = (
   const centerY = 300
 
 
-  const SPIN_FREQUENCY = 10;
+  const SPIN_FREQUENCY = Math.PI / ((segments.length * 2) + Math.random());
   const PI2 = Math.PI * 2;
   const UP_TIME = upDuration | 1000;
   const DOWN_TIME = downDuration | 500;
@@ -114,7 +114,7 @@ const RouletteWheel = (
   };
   const initCanvas = () => {
     if(canvasRef.current){
-      canvasRef.current.addEventListener('click', spin2, false)
+      // canvasRef.current.addEventListener('click', spin2, false)
       canvasctx = canvasRef.current?.getContext('2d')
     }
   }
@@ -228,7 +228,7 @@ const RouletteWheel = (
       canvasctx.font = "bold 2em " + fontFamily;
       canvasctx.fillStyle = contrastColor || "white";
       canvasctx.textAlign = "center";
-      canvasctx.fillText(buttonText || "Spin", centerX, centerY + 3);
+   
       canvasctx.stroke();
 
       // Draw outer circle
@@ -248,16 +248,18 @@ const RouletteWheel = (
   
 
   return (
-    <div id='wheel' className=" items-center">
+    <div id='wheel' className=" items-center relative">
       <canvas
         ref={canvasRef}
         id="canvas"
         width={600}
         height={600}
-        style={{
-          pointerEvents: isFinished && isOnlyOnce ? "none" : "auto"
-        }}
+        className='  z-0'
+
       />
+      <button onClick={() => spin2()} style={{ left: centerX - 25, top: centerY - 15, pointerEvents: isFinished && isOnlyOnce ? "none" : "auto" }} className=' absolute l z-10 text-2xl text-white'>
+        {buttonText ?? 'SPIN'}
+      </button>
     </div>
   )
 }

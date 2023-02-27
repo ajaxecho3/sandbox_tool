@@ -1,15 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Transition, Dialog } from '@headlessui/react'
-import { uptime } from 'process'
 import React, { ChangeEvent, ChangeEventHandler, FormEvent, Fragment, use, useEffect, useState } from 'react'
 import Input from '../../components/common/Input'
 import Modal from '../../components/common/Modal'
-import LottieRoulette from '../../components/Lottie/LottieRoulette'
 import RouletteWheel from '../../components/RouletteWheel'
-import SectionHeader from '../../components/common/SectionHeader'
 import useDebounce from '../../hooks/useDebounce'
 import RandomGeneratorHexColor from '../../utils/ColorGenerator'
-import Avatar, { genConfig } from 'react-nice-avatar'
+import ColorPicker from '../../components/common/ColorPicker'
+import AvatarMe from '../../components/common/Avatar'
 type Props = {}
 
 type Segment = { name: string, color: string, image: string}
@@ -32,12 +29,11 @@ const Roulette = (props: Props) => {
   const [winner, setWinner] = useState('')
   const [winners, setWinners] = useState<Array<string>>([])
   const debounceVal = useDebounce(winner)
-  const [currentName, setCurrentName] = useState<string>('')
   const [CurrentSegments, setCurrentSegments] = useState<Array<string>>([])
   const [showSetting, setShowSetting] = useState(false)
   const [settings, setSettings] = useState<Setting>({
     upTime: 1000,
-    downTime:100,
+    downTime:500,
     color: '#000000',
     bgColor: '#ffffff',
     colorContrast: '#ffffff',
@@ -47,20 +43,11 @@ const Roulette = (props: Props) => {
   })
 
   const handleOnFinish = (e: string) => {
-   
     setWinner(e)
-
-
   }
 
-  useEffect(() => {
-    if (debounceVal !== '') {
-      console.log('Winner is ', debounceVal)
-
-      setShowWinner(true)
-    }
-  }, [debounceVal])
   const handleCloseModal = () => {
+  
     setWinners((prev) => {
       let temp = [...prev]
       temp.push(winner)
@@ -68,14 +55,14 @@ const Roulette = (props: Props) => {
       return temp
 
     })
-
- 
     setCurrentSegments((prev) => prev.filter((d) => d !== winner))
+    
     setShowWinner(false)
   }
 
   const handleLoadSegments = () => {
     const segmentsName = segments.map((segments) => segments.name)
+    console.log(segments)
     setCurrentSegments(segmentsName)
   }
   const [formData, setFormData] = useState<Segment>({
@@ -99,33 +86,35 @@ const Roulette = (props: Props) => {
       image: base64,
     });
   };
-
+  function random() {
+    return Math.random() - 0.5 * 50;
+  }
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if(formData.name === 'iatmanila'){
       let iatTeam = [
-        { name: 'Bernard', color: '#000000', image: '' },
-        { name: 'Alan', color: '#000000', image: '' },
-        { name: 'Day', color: '#000000', image: '' },
-        { name: 'Sherwin', color: '#000000', image: '' },
-        { name: 'Kerby', color: '#000000', image: '' },
-        { name: 'Jean', color: '#000000', image: '' },
-        { name: 'Kim', color: '#000000', image: '' },
-        { name: 'Khars', color: '#000000', image: '' },
-        { name: 'Monica', color: '#000000', image: '' },
-        { name: 'Charm', color: '#000000', image: '' },
-        { name: 'Jeff', color: '#000000', image: '' },
-        { name: 'Cams', color: '#000000', image: '' },
-        { name: 'Dianne', color: '#000000', image: '' },
-        { name: 'Franz', color: '#000000', image: '' },
-        { name: 'Venus', color: '#000000', image: '' },
-        { name: 'Gelyn', color: '#000000', image: '' },
-      ]
+        { name: 'Bernard', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Alan', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Day', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Sherwin', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Kerby', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Jean', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Kim', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Khars', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Monica', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Charm', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Jeff', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Cams', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Dianne', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Franz', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Venus', color: RandomGeneratorHexColor(), image: '' },
+        { name: 'Gelyn', color: RandomGeneratorHexColor(), image: '' },
+      ].sort(random)
 
       setSegments(iatTeam)
       setFormData({
         name: '',
-        color: '#000000',
+        color: RandomGeneratorHexColor(),
         image: ''
       })
     }else{
@@ -135,28 +124,49 @@ const Roulette = (props: Props) => {
       setSegments(temp_segment)
       setFormData({
         name: '',
-        color: '#000000',
+        color: RandomGeneratorHexColor(),
         image: ''
       })
     }
-
-    
-
-  
-    
   };
 
   const handleCloseSetting = () =>{
     setShowSetting(false)
   }
 
-  const config = genConfig(winner)
-
  
-  
-  const configGenerator = (name:string) => {
-      return genConfig(name)
+
+
+  useEffect(() => {
+    if (debounceVal !== '') {
+    
+      setShowWinner(true)
+    }
+  }, [debounceVal])
+
+
+  const handleChangeColor = (targetName: string, color: string) => {
+    
+    
+
+    setSegments((prevSegments) => {
+
+      return prevSegments.map((segment) => {
+        if(segment.name === targetName){
+          return {...segment, color: color}
+        }else{
+          return segment
+        };
+      })
+    })
   }
+
+  const getColorByName = (name: string) => {
+
+    const selectSegment = segments.filter((seg) => seg.name === name)
+    return selectSegment[0]?.color ?? ''
+  }
+  
 
 
   return (
@@ -229,11 +239,12 @@ const Roulette = (props: Props) => {
             
           </div>
         </Modal>
+        
         <section className="text-gray-600 body-font overflow-hidden flex justify-center ">
 
           <div className='flex justify-center p-6 w-3/6'>
-            {
-              CurrentSegments.length > 0 ?
+           {
+            CurrentSegments.length > 0 && (
                 <RouletteWheel
                   fontSize={settings.fontSize}
                   segments={CurrentSegments}
@@ -245,13 +256,12 @@ const Roulette = (props: Props) => {
                   buttonText={settings.buttonText}
                   isOnlyOnce={false}
                   size={settings.wheelSize}
-                  segmentColors={CurrentSegments.map((color) => RandomGeneratorHexColor())}
+                  segmentColors={segments.map((segment) => segment.color)}
                   upDuration={settings.upTime}
                   downDuration={settings.downTime}
                 />
-                :
-                <LottieRoulette />
-            }
+            )
+           }
           
           </div>
           
@@ -264,7 +274,7 @@ const Roulette = (props: Props) => {
             hideHeader={false}
            >
             <div className='flex justify-center items-center mt-4'>
-              <Avatar className='h-40 w-40 rounded-lg ring-2 ring-white' {...config}/>
+              <AvatarMe tw='w-40 h-40' name={winner} color={getColorByName(winner)}/>
               {/* <img className='h-40 w-40 rounded-lg ring-2 ring-white' src='https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' alt='winner'/> */}
             </div>
 
@@ -294,7 +304,7 @@ const Roulette = (props: Props) => {
                 {
                   winners.map((winner, idx) => (
                     <div key={idx} className='mb-2 text-gray-600  p-2 flex space-x-3 items-center'>
-                      <Avatar className='h-10 w-10 rounded-lg ring-2 ring-white' {...configGenerator(winner)} />
+                      <AvatarMe tw='h-10 w-10' name={winner} color={getColorByName(winner)} />
                       <p className=" leading-relaxed text-2xl" >
                         {winner}
                       </p>
@@ -308,7 +318,7 @@ const Roulette = (props: Props) => {
           }
          
         </div>
-        <div className='flex justify-between  flex-col lg:flex-row lg:space-x-3'>
+        <div className='flex justify-between  flex-col lg:flex-row lg:space-x-3 lg:mx-auto lg:w-1/2'>
           {
             segments.length !== 0 && (
               <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md mb-5">
@@ -321,18 +331,22 @@ const Roulette = (props: Props) => {
                 </div>
                 {
                   segments.map((segment, idx) => (
-                    <div key={idx} className='mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2 flex space-x-3 items-center'>
-                      {
-                        segment.image !== '' ? 
-                          <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white" src={segment.image} alt="" />
-                          :
-                          <Avatar className='h-10 w-10 rounded-lg ring-2 ring-white' {...configGenerator(segment.name)} />
-                        
-                      }
-                      <p className="leading-relaxed text-lg" >
+                    <div key={idx} className='mb-2 text-gray-600 border-solid rounded-lg border-[1px] p-2 flex justify-between space-x-3 items-center'>
+                      <div className='flex items-center justify-between space-x-3'>
+                        {
+                          segment.image !== '' ?
+                            <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white" src={segment.image} alt="" />
+                            :
+                            <AvatarMe tw='h-10 w-10' name={segment.name} color={segment.color}  />
 
-                        {segment.name}
-                      </p>
+                        }
+                        <p className="leading-relaxed text-lg" >
+                          {segment.name}
+                        </p>
+                      </div>
+                      <div>
+                        <ColorPicker selectedColor={segment.color} onChange={(e) => handleChangeColor(segment.name,e.hex)} />
+                      </div>
                     </div>
                   ))
                 }
@@ -341,15 +355,15 @@ const Roulette = (props: Props) => {
               </div>
             )
           }
-          <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full lg:w-1/4 mt-10 md:mt-0 relative z-10 shadow-md">
+          <div className=" bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full max-h-56 lg:w-full mt-10 md:mt-0 relative  shadow-md">
             <div className='flex justify-between mb-2'>
               <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Add Segment</h2>
             </div>
-            <div className="relative mb-4 flex space-x-2">
+            <div className="relative mb-4  ">
               <form
                 onSubmit={handleSubmit}
               >
-                <div className="mb-4">
+                <div className="mb-4 w-full flex flex-col">
                   <label
                     className="block text-gray-700 font-medium mb-2"
                     htmlFor="name"
@@ -366,39 +380,7 @@ const Roulette = (props: Props) => {
                     onChange={handleChange}
                   />
                 </div>
-                <div className="mb-4">
-                  <label
-                    className="block text-gray-700 font-medium mb-2"
-                    htmlFor="color"
-                  >
-                    Color
-                  </label>
-                  <input
-                    className="border border-gray-400 h-7 w-full"
-                    type="color"
-                    id="color"
-                    name="color"
-                    value={formData.color}
-                    onChange={handleChange}
-                  >
-                    
-                  </input>
-                </div>
-                <div className="mb-4">
-                  <label
-                    className="block text-gray-700 font-medium mb-2"
-                    htmlFor="image"
-                  >
-                    Image
-                  </label>
-                  <input
-                    className="border border-gray-400 p-2 w-full"
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleImageChange}
-                  />
-                </div>
+               
                 <button disabled={winners.length !== 0 ? true : false} className=" disabled:bg-gray-600 disabled:hover:bg-gray-600 bg-indigo-500 text-white py-2 px-4 rounded-full w-full hover:bg-indigo-600">
                   Add
                 </button>
